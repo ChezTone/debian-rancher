@@ -1,0 +1,18 @@
+version: '2'
+services:
+  rancher-mysql:
+    build: ./dockers/mysql
+    image: rancher-mysql
+    volumes:
+      - /var/lib/mysql:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=mysqlPWD
+    restart: always
+  rancher-server:
+    image: rancher/server
+    ports:
+      - 127.0.0.1:8081:8080
+    command: ["/usr/bin/s6-svscan", "/service" , "--db-host" , "rancher-mysql"]
+    links:
+      - rancher-mysql
+    restart: always
